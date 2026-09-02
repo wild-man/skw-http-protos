@@ -1,0 +1,15 @@
+[package]
+name = "skw-lib-http-protos"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+skw-lib-shared = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_derive = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
