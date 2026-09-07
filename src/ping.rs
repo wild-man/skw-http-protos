@@ -19,7 +19,7 @@ crate::impl_try_from_iggy_message!(RpcMethod);
 #[serde(rename_all = "PascalCase")]
 pub enum RpcPayload {
     #[serde(rename_all = "PascalCase")]
-    Ping { ts: DateTime<Utc> },
+    Ping { ts: DateTime<Utc>, count: u64 },
 
     #[serde(rename_all = "PascalCase")]
     Public {},
