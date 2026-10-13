@@ -1,5 +1,8 @@
 #![allow(unused_imports)]
-use skw_lib_shared::prelude::{chrono::*, consts::*, iggy::RpcMessageTrait, jsonrpc::*, serde::*, strum::*, uuid::*};
+use skw_lib_shared::{
+    AppError,
+    prelude::{chrono::*, consts::*, iggy::RpcMessageTrait, jsonrpc::*, serde::*, strum::*, uuid::*},
+};
 use std::{fmt::Debug, str::FromStr};
 
 pub mod auth;
@@ -45,8 +48,9 @@ where
         self.api_key.as_deref()
     }
 
-    fn into_rpc_method(self) -> Result<T, ServiceHttpError> {
-        self.payload.ok_or(ServiceHttpError::BadRequest)
+    fn into_rpc_method(self) -> Result<T, AppError> {
+        self.payload
+            .ok_or(AppError::Service(ServiceHttpError::BadRequest))
     }
 }
 
