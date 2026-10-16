@@ -6,6 +6,7 @@ use skw_lib_shared::{
 use std::{fmt::Debug, str::FromStr};
 
 pub mod auth;
+pub mod dialog;
 pub mod ping;
 
 #[derive(Debug, Display)]
@@ -50,7 +51,7 @@ where
 
     fn into_rpc_method(self) -> Result<T, AppError> {
         self.payload
-            .ok_or(AppError::Service(ServiceHttpError::BadRequest))
+            .ok_or(AppError::Service(SkwServiceHttpError::BadRequest))
     }
 }
 
