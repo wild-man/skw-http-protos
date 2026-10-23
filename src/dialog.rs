@@ -98,3 +98,4 @@ pub enum RpcPayload {
     DeleteDialog {},
 }
 crate::impl_try_from_string!(RpcPayload);
+impl RpcReply for RpcPayload {}

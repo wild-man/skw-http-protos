@@ -24,6 +24,7 @@ pub enum RpcPayload {
     },
 }
 crate::impl_try_from_string!(RpcPayload);
+impl RpcReply for RpcPayload {}
 
 pub mod internal {
     use super::*;

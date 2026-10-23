@@ -1,7 +1,15 @@
 #![allow(unused_imports)]
 use skw_lib_shared::{
     AppError,
-    prelude::{chrono::*, consts::*, iggy::RpcMessageTrait, jsonrpc::*, serde::*, strum::*, uuid::*},
+    prelude::{
+        chrono::*,
+        consts::*,
+        iggy::{RpcMessageTrait, RpcReply},
+        jsonrpc::*,
+        serde::*,
+        strum::*,
+        uuid::*,
+    },
 };
 use std::{fmt::Debug, str::FromStr};
 
