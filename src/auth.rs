@@ -1,4 +1,4 @@
-use skw_lib_shared::prelude::iggy::{HeaderKey, ReceivedMessage};
+use skw_lib_shared::prelude::iggy::ReceivedMessage;
 
 use super::*;
 

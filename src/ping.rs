@@ -1,4 +1,4 @@
-use skw_lib_shared::prelude::iggy::{HeaderKey, ReceivedMessage};
+use skw_lib_shared::prelude::iggy::ReceivedMessage;
 
 use super::*;
 
@@ -28,13 +28,20 @@ pub mod signed {
         #[serde(rename_all = "PascalCase")]
         PingSigned {},
 
-        /// Queues a `PingTask` (processed by ping-mq-service) and replies `Created` (201).
+        /// Queues a `PingTask` and replies `Created` (201); ping-mq-service sends the final reply
+        /// (`Ping`, 200) under the same signature once the task is done.
         #[serde(rename_all = "PascalCase")]
         PingCreated {},
 
-        /// Queues a `PingTask` (processed by ping-mq-service) and replies `Accepted` (202).
+        /// Queues a `PingTask` and replies `Accepted` (202); ping-mq-service sends the final reply
+        /// (`Ping`, 200) under the same signature once the task is done.
         #[serde(rename_all = "PascalCase")]
         PingAccepted {},
+
+        /// Test helper: replies `Ping` (200) like `PingSigned`, but only after `PING_SLOW_DELAY`
+        /// (ping-stream-service), so the request is reliably still pending meanwhile.
+        #[serde(rename_all = "PascalCase")]
+        PingSlow {},
     }
     crate::impl_try_from_iggy_message!(RpcMethod);
 }
@@ -48,11 +55,11 @@ pub enum RpcPayload {
     #[serde(rename_all = "PascalCase")]
     Ping { ts: DateTime<Utc>, count: u64 },
 
-    /// provisional reply to `PingCreated`
+    /// provisional reply to `PingCreated`; the final one is `Ping`
     #[serde(rename_all = "PascalCase")]
     PingCreated {},
 
-    /// provisional reply to `PingAccepted`
+    /// provisional reply to `PingAccepted`; the final one is `Ping`
     #[serde(rename_all = "PascalCase")]
     PingAccepted {},
 }

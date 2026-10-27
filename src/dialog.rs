@@ -1,4 +1,4 @@
-use skw_lib_shared::prelude::iggy::{HeaderKey, ReceivedMessage};
+use skw_lib_shared::prelude::iggy::ReceivedMessage;
 
 use super::*;
 
@@ -21,12 +21,18 @@ pub mod signed {
         /// Most recently active first; `Before` is the `UpdatedAt` of the last dialog of the previous page.
         #[strum(props(topic = "signed"))]
         #[serde(rename_all = "PascalCase")]
-        ListDialogs { limit: Option<u32>, before: Option<DateTime<Utc>> },
+        ListDialogs {
+            limit: Option<u32>,
+            before: Option<DateTime<Utc>>,
+        },
 
         /// `AfterMessageId` returns only newer messages (polling for a pending answer).
         #[strum(props(topic = "signed"))]
         #[serde(rename_all = "PascalCase")]
-        GetDialog { id: Uuid, after_message_id: Option<Uuid> },
+        GetDialog {
+            id: Uuid,
+            after_message_id: Option<Uuid>,
+        },
 
         /// Stores the question and a Pending assistant message; the answer is produced by dialog-mq-service.
         #[strum(props(topic = "signed"))]
@@ -87,10 +93,16 @@ pub enum RpcPayload {
     ListDialogs(Vec<Dialog>),
 
     #[serde(rename_all = "PascalCase")]
-    GetDialog { dialog: Dialog, messages: Vec<Message> },
+    GetDialog {
+        dialog: Dialog,
+        messages: Vec<Message>,
+    },
 
     #[serde(rename_all = "PascalCase")]
-    Ask { user_message_id: Uuid, assistant_message_id: Uuid },
+    Ask {
+        user_message_id: Uuid,
+        assistant_message_id: Uuid,
+    },
 
     RenameDialog(Dialog),
 

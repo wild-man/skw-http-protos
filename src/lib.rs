@@ -1,9 +1,7 @@
-#![allow(unused_imports)]
 use skw_lib_shared::{
     AppError,
     prelude::{
         chrono::*,
-        consts::*,
         iggy::{RpcMessageTrait, RpcReply},
         jsonrpc::*,
         serde::*,
@@ -11,7 +9,7 @@ use skw_lib_shared::{
         uuid::*,
     },
 };
-use std::{fmt::Debug, str::FromStr};
+use std::fmt::Debug;
 
 pub mod auth;
 pub mod dialog;
@@ -23,7 +21,8 @@ pub enum InvalidMessageError {
     Serde(serde_json::Error),
 }
 
-/// запрос который приходит сервису по Iggy шине
+/// Request a service receives over the Iggy bus: the gate's body plus the headers the gate adds
+/// (`signature`, `api-key`, `http-method`, `http-path`).
 /// параметризируется структурами http-potos::[mod]::HttpMethod
 #[derive(Debug)]
 pub struct JsonRpcServiceRequest<T: Deserialize<'static> + Debug> {
@@ -78,28 +77,28 @@ macro_rules! impl_try_from_iggy_message {
                         .ok_or(InvalidHeaders)?;
 
                     let http_method = headers
-                        .get(&HeaderKey::from_str(IGGY_HEADER_HTTP_METHOD).unwrap())
+                        .get(&::skw_lib_shared::prelude::iggy::header_keys::HTTP_METHOD)
                         .ok_or(InvalidHeaders)?
                         .as_str()
                         .map_err(|_| InvalidHeaders)?
                         .to_string();
 
                     let http_path = headers
-                        .get(&HeaderKey::from_str(IGGY_HEADER_HTTP_PATH).unwrap())
+                        .get(&::skw_lib_shared::prelude::iggy::header_keys::HTTP_PATH)
                         .ok_or(InvalidHeaders)?
                         .as_str()
                         .map_err(|_| InvalidHeaders)?
                         .to_string();
 
                     let signature = headers
-                        .get(&HeaderKey::from_str(IGGY_HEADER_SIGNATURE).unwrap())
+                        .get(&::skw_lib_shared::prelude::iggy::header_keys::SIGNATURE)
                         .ok_or(InvalidHeaders)?
                         .as_str()
                         .map_err(|_| InvalidHeaders)?
                         .to_string();
 
                     let api_key = headers
-                        .get(&HeaderKey::from_str(IGGY_HEADER_API_KEY).unwrap())
+                        .get(&::skw_lib_shared::prelude::iggy::header_keys::API_KEY)
                         .map(|m| m.as_str().map(|s| s.to_string()))
                         .transpose()
                         .map_err(|_| InvalidHeaders)?;
