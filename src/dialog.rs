@@ -34,7 +34,9 @@ pub mod signed {
             after_message_id: Option<Uuid>,
         },
 
-        /// Stores the question and a Pending assistant message; the answer is produced by dialog-mq-service.
+        /// Stores the question and a Pending assistant message, replies provisionally (202, `Ask` with
+        /// both ids); dialog-mq-service then sends the final reply `AskAnswer` under the same signature.
+        /// Over HTTP (one-shot) only the 202 arrives: read the answer with `GetDialog` then.
         #[strum(props(topic = "signed"))]
         #[serde(rename_all = "PascalCase")]
         Ask { dialog_id: Uuid, content: String },
@@ -98,10 +100,18 @@ pub enum RpcPayload {
         messages: Vec<Message>,
     },
 
+    /// Provisional (202) reply of `Ask`.
     #[serde(rename_all = "PascalCase")]
     Ask {
         user_message_id: Uuid,
         assistant_message_id: Uuid,
+    },
+
+    /// Final reply of `Ask`: the assistant message, `Done` or `Failed`.
+    #[serde(rename_all = "PascalCase")]
+    AskAnswer {
+        dialog_id: Uuid,
+        message: Message,
     },
 
     RenameDialog(Dialog),
@@ -110,4 +120,11 @@ pub enum RpcPayload {
     DeleteDialog {},
 }
 crate::impl_try_from_string!(RpcPayload);
-impl RpcReply for RpcPayload {}
+impl RpcReply for RpcPayload {
+    fn status(&self) -> Option<SkwServiceStatus> {
+        match self {
+            RpcPayload::Ask { .. } => Some(SkwServiceStatus::Accepted),
+            _ => None,
+        }
+    }
+}
